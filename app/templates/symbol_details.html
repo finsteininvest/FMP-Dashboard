@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>FMP Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/Navigation-Clean.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/Navigation-with-Search.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.css') }}">
+    <script src="{{ url_for('static', filename='assets/js/Chart.min.js') }}"></script>
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">FMP Dashboard</h5>
+        </div>
+        <div class="card-body d-flex">
+            <div class="form-group"><form action = "/search" method="POST"><label>Name / Symbol:  </label><input type="text" name = "searchstring"/><button class="btn btn-primary" type="submit">Search</button></form></div>
+        </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Performance for {{ company_name }}</h4>
+            Current - Price/Book Ratio: &nbsp;&nbsp;&nbsp;&nbsp; {{ price_book_ratio }} &nbsp;&nbsp;&nbsp;&nbsp; Price/Earning Ratio: {{ price_earning_ratio }}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                            {% for key,value in data.iterrows() %}
+                            <td align = "right">
+                            {{ value['year'] }}
+                            </td>
+                            {% endfor %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td >EPS</td>
+                            {% for key,value in data.iterrows() %}
+                            <td align = "right">
+                            {{ "%.2f" % value['EPS']|float }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>ROE</td>
+                            {% for key,value in data.iterrows() %}
+                            <td align = "right">
+                            {{ "%.2f" % value['ROE']|float }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Dividends</td>
+                            {% for key,value in data.iterrows() %}
+                            <td align="right">
+                            {{ "%.2f" % value['adjDividend']|float }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Book Value p. Share</td>
+                            {% for key,value in data.iterrows() %}
+                            <td align = "right">
+                            {{ "%.2f" % value['Book Value per Share']|float }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Current Ratio</td>
+                            {% for key,value in data.iterrows() %}
+                            <td align = "right">
+                            {{ "%.2f" % value['current_ratio']|float }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Debt/Equity Ratio</td>
+                            {% for key,value in data.iterrows() %}
+                            <td align = "right">
+                            {{ "%.2f" % value['de_ratio']|float }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Chart</h4>
+            <canvas id="myChart" width="400" height="50"></canvas>
+                <script>
+                    // Global parameters:
+                    // do not resize the chart canvas when its container does (keep at 600x400px)
+                    //Chart.defaults.global.responsive = false;
+                     
+                    // define the chart data
+                    var chartData = {
+                      labels : [{% for item in labels %}
+                                 "{{item}}",
+                                {% endfor %}],
+                      datasets : [{
+                          label: '{{ legend }}',
+                          fill: true,
+                          lineTension: 0.1,
+                          backgroundColor: "rgba(75,192,192,0.4)",
+                          borderColor: "rgba(75,192,192,1)",
+                          borderCapStyle: 'butt',
+                          borderDash: [],
+                          borderDashOffset: 0.0,
+                          borderJoinStyle: 'miter',
+                          pointBorderColor: "rgba(75,192,192,1)",
+                          pointBackgroundColor: "#fff",
+                          pointBorderWidth: 1,
+                          pointHoverRadius: 5,
+                          pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                          pointHoverBorderColor: "rgba(220,220,220,1)",
+                          pointHoverBorderWidth: 2,
+                          pointRadius: 1,
+                          pointHitRadius: 10,
+                          data : [{% for item in values %}
+                                    {{item}},
+                                  {% endfor %}],
+                          spanGaps: false
+                      }]
+                    }
+ 
+                    // get chart canvas
+                    var ctx = document.getElementById("myChart").getContext("2d");
+                     
+                    // create the chart using the chart canvas
+                    var myChart = new Chart(ctx, {
+                      type: 'line',
+                      data: chartData,
+                    });
+                </script>
+        </div>
+    </div>
+    <p>
+    <small>Data provided by <a href = "https://financialmodelingprep.com/">Financialmodelingprep</a></small>
+    </p>
+</body>
+
+</html>

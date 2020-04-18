@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>FMP Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/Navigation-Clean.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/Navigation-with-Search.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.css') }}">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">FMP Dashboard</h5>
+        </div>
+        <div class="card-body d-flex">
+            <div class="form-group"><form action = "/search" method="POST"><label>Name / Symbol:  </label><input type="text" name = "searchstring"/><button class="btn btn-primary" type="submit">Search</button></form></div>
+        </div>
+    </div>        
+    <div class="card">
+        <div class="card-body">
+            <h4>Search Results:</h4>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key,value in found_symbols.iterrows() %}
+                        <tr>
+                            <td><a href="/symbol/{{ key }}">{{ key }}</a></td>
+                            <td>{{ value['name'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <p>
+    <small>Data provided by <a href = "https://financialmodelingprep.com/">Financialmodelingprep</a></small>
+    </p>
+</body>
+
+</html>

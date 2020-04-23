@@ -35,7 +35,7 @@ def search():
 def symbol(symbol):
 	searchsymbol = html.escape(symbol)
 	available_stocks = fmp.get_symbols_list()
-	validsymbol = available_stocks[available_stocks.index.str.contains(searchsymbol)]
+	validsymbol = available_stocks.loc[searchsymbol]
 
 	if len(validsymbol)>0:
 		eps = fmp.get_historic_eps(searchsymbol)
@@ -76,7 +76,8 @@ def symbol(symbol):
 		price_book_ratio = f'{price_book_ratio:.2f}'
 
 		historic_values = fmp.get_historic_values(searchsymbol, type = '')
-		historic_values = historic_values[-500:]
+		trading_days_per_year = 251
+		historic_values = historic_values[-trading_days_per_year*5:]
 		legend = f'Close price {searchsymbol}'
 		labels = historic_values.index.values.tolist()
 		values = historic_values['close'].values.tolist()
@@ -84,7 +85,7 @@ def symbol(symbol):
 		return render_template('symbol_details.html', 
 								title='FMP Dashboard', 
 								data = all_data, 
-								company_name = validsymbol['name'].iloc[0], 
+								company_name = validsymbol['name'], 
 								values=values, 
 								labels=labels, 
 								legend=legend,
